@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+option csharp_namespace = "censudex_orders.Protos";
+
+package orders;
+
+// Servicio de gestión de pedidos
+service OrderService {
+  // Crear un nuevo pedido
+  rpc CreateOrder (CreateOrderRequest) returns (OrderResponse);
+  
+  // Obtener todos los pedidos (con filtros opcionales)
+  rpc GetOrders (GetOrdersRequest) returns (OrderListResponse);
+  
+  // Obtener un pedido por ID
+  rpc GetOrderById (GetOrderByIdRequest) returns (OrderResponse);
+  
+  // Actualizar el estado de un pedido
+  rpc UpdateOrderStatus (UpdateOrderStatusRequest) returns (OrderResponse);
+  
+  // Cancelar un pedido
+  rpc CancelOrder (CancelOrderRequest) returns (OrderResponse);
+}
+
+// Mensajes de solicitud
+
+message CreateOrderRequest {
+  string client_id = 1;
+  string shipping_address = 2;
+  repeated OrderItemRequest items = 3;
+}
+
+message OrderItemRequest {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+message GetOrdersRequest {
+  optional string order_id = 1;
+  optional string client_id = 2;
+  optional string client_name = 3;
+  optional string start_date = 4;
+  optional string end_date = 5;
+}
+
+message GetOrderByIdRequest {
+  string order_id = 1;
+}
+
+message UpdateOrderStatusRequest {
+  string order_id = 1;
+  string status = 2;
+  optional string tracking_number = 3;
+}
+
+message CancelOrderRequest {
+  string order_id = 1;
+  string cancellation_reason = 2;
+}
+
+// Mensajes de respuesta
+
+message OrderResponse {
+  string id = 1;
+  string client_id = 2;
+  string status = 3;
+  double total_amount = 4;
+  string shipping_address = 5;
+  optional string tracking_number = 6;
+  optional string cancellation_reason = 7;
+  string created_at = 8;
+  string updated_at = 9;
+  repeated OrderItemResponse items = 10;
+}
+
+message OrderItemResponse {
+  string id = 1;
+  string product_id = 2;
+  string product_name = 3;
+  int32 quantity = 4;
+  double unit_price = 5;
+  double subtotal = 6;
+}
+
+message OrderListResponse {
+  repeated OrderResponse orders = 1;
+  int32 total_count = 2;
+}
